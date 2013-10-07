@@ -1,8 +1,21 @@
 #!/bin/bash
 
-LXC_BASE="/data/lxc"
+LXC_BASE="/tank/lxc"
 
 CONTAINER=$1
+
+
+
+
+if ! IP=`host $CONTAINER | egrep -o "([0-9]{1,3}(\.[0-9]{1,3}){3})"`;then
+	echo Erron in DNS!
+	exit 1
+fi
+
+
+
+
+
 
 if [ -e $LXC_BASE/$CONTAINER ];then
     echo 'Container exists!!!'
@@ -11,15 +24,16 @@ fi
 
 
 # lxc
-lxc-create -n $CONTAINER -t ubuntu -- -r precise
+lxc-create -n $CONTAINER -t ubuntu -- -r precise || (echo lxc-create error ;exit 1)
 # -- -a i386
-sed -i s@/var/lib@/data@ /data/lxc/$CONTAINER/config || exit 1
+#sed -i s@/var/lib@/data@ /data/lxc/$CONTAINER/config || exit 1
 
 cd $LXC_BASE
 
 rm -rf ${CONTAINER}.tmp
 mv $CONTAINER ${CONTAINER}.tmp
-zfs create `echo $LXC_BASE/$CONTAINER|sed 's@/data@tank@'`
+#zfs create `echo $LXC_BASE/$CONTAINER|sed 's@/data@tank@'`
+zfs create `echo $LXC_BASE/$CONTAINER|cut -f2- -d/` || (echo zfs create error ;exit 1)
 
 mv ${CONTAINER}.tmp/* ${CONTAINER}/
 rm -rf ${CONTAINER}.tmp
@@ -30,7 +44,7 @@ rm -rf ${CONTAINER}.tmp
 cp -f  /etc/apt/apt.conf.d/recommends $LXC_BASE/$CONTAINER/rootfs/etc/apt/apt.conf.d/
 
 
-CMD="chroot $LXC_BASE/$CONTAINER/rootfs"
+CMD="chroot $LXC_BASE/$CONTAINER/rootfs" || (echo chroot error ;exit 1)
 
 # default user
 $CMD userdel -r ubuntu
@@ -58,8 +72,6 @@ echo root:a| $CMD chpasswd
 
 # net
 
-IP=`host $CONTAINER|sed "s/.*has address //"`
-
 cat >  $LXC_BASE/$CONTAINER/rootfs/etc/network/interfaces << EOF
 auto lo
 iface lo inet loopback
@@ -67,8 +79,8 @@ iface lo inet loopback
 auto eth0
 iface eth0 inet static
     address $IP
-    netmask 255.255.254.0
-    gateway 10.0.1.254
+    netmask 255.255.255.0
+    gateway 10.128.0.1
 EOF
 
 lxc-start -d -n $CONTAINER

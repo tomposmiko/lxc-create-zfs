@@ -8,9 +8,12 @@ CONTAINER=$1
 
 
 if ! IP=`host $CONTAINER | egrep -o "([0-9]{1,3}(\.[0-9]{1,3}){3})"`;then
-	echo Erron in DNS!
+	echo Error in DNS!
 	exit 1
 fi
+
+GW=`/sbin/ip ro sh |awk '/^default/ { print $3 }'`
+
 
 
 debootstrap >/dev/null 2>&1 || (echo No debootstrap! ;exit 1)
@@ -80,7 +83,7 @@ auto eth0
 iface eth0 inet static
     address $IP
     netmask 255.255.255.0
-    gateway 10.128.0.1
+    gateway $GW
 EOF
 
 lxc-start -d -n $CONTAINER

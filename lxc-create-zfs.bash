@@ -17,7 +17,10 @@ fi
 GW=`ip ro sh |awk '/^default/ { print $3 }'`
 NM=`ifconfig |grep -A1 br-| awk -F: '/Mask:/ { print $4 }'`
 
-debootstrap >/dev/null 2>&1 || (echo "ERROR: No debootstrap!"; exit 1)
+if debootstrap >/dev/null 2>&1; then
+	echo "ERROR: No debootstrap!";
+	exit 1
+fi
 
 
 
@@ -28,16 +31,21 @@ fi
 
 
 # lxc
-lxc-create -n $CONTAINER -t ubuntu -- -r precise || (echo "ERROR: lxc-create"; exit 1)
+if lxc-create -n $CONTAINER -t ubuntu -- -r precise;then
 # -- -a i386
-#sed -i s@/var/lib@/data@ /data/lxc/$CONTAINER/config || exit 1
+	echo "ERROR: lxc-create";
+	exit 1
+fi
 
 cd $LXC_BASE
 
 rm -rf ${CONTAINER}.tmp
 mv $CONTAINER ${CONTAINER}.tmp
 #zfs create `echo $LXC_BASE/$CONTAINER|sed 's@/data@tank@'`
-zfs create `echo $LXC_BASE/$CONTAINER|cut -f2- -d/` || (echo "ERROR: zfs create"; exit 1)
+if zfs create `echo $LXC_BASE/$CONTAINER|cut -f2- -d/`;then
+	echo "ERROR: zfs create";
+	exit 1
+fi
 
 mv ${CONTAINER}.tmp/* ${CONTAINER}/
 rm -rf ${CONTAINER}.tmp
@@ -48,7 +56,12 @@ rm -rf ${CONTAINER}.tmp
 cp -f  /etc/apt/apt.conf.d/recommends $LXC_BASE/$CONTAINER/rootfs/etc/apt/apt.conf.d/
 
 
-CMD="chroot $LXC_BASE/$CONTAINER/rootfs" || (echo "ERROR: chroot"; exit 1)
+CMD="chroot $LXC_BASE/$CONTAINER/rootfs"
+
+if $CMD /bin/echo;then
+	echo "ERROR: chroot"
+	exit 1
+fi
 
 # default user
 $CMD userdel -r ubuntu

@@ -13,7 +13,7 @@ if ! IP=`host $CONTAINER | egrep -o "([0-9]{1,3}(\.[0-9]{1,3}){3})"`;then
 fi
 
 
-
+debootstrap >/dev/null 2>&1 || (echo No debootstrap! ;exit 1)
 
 
 

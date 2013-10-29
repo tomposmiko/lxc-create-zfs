@@ -17,8 +17,8 @@ fi
 GW=`ip ro sh |awk '/^default/ { print $3 }'`
 NM=`ifconfig |grep -A1 br-| awk -F: '/Mask:/ { print $4 }'`
 
-if debootstrap >/dev/null 2>&1; then
-	echo "ERROR: No debootstrap!";
+if ! debootstrap >/dev/null 2>&1; then
+	echo "ERROR: No debootstrap";
 	exit 1
 fi
 

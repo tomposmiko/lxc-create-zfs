@@ -17,7 +17,7 @@ fi
 GW=`ip ro sh |awk '/^default/ { print $3 }'`
 NM=`ifconfig |grep -A1 br-| awk -F: '/Mask:/ { print $4 }'`
 
-if ! debootstrap >/dev/null 2>&1; then
+if ! debootstrap --help >/dev/null 2>&1; then
 	echo "ERROR: No debootstrap";
 	exit 1
 fi
@@ -31,7 +31,7 @@ fi
 
 
 # lxc
-if lxc-create -n $CONTAINER -t ubuntu -- -r precise;then
+if ! lxc-create -n $CONTAINER -t ubuntu -- -r precise;then
 # -- -a i386
 	echo "ERROR: lxc-create";
 	exit 1
@@ -42,7 +42,7 @@ cd $LXC_BASE
 rm -rf ${CONTAINER}.tmp
 mv $CONTAINER ${CONTAINER}.tmp
 #zfs create `echo $LXC_BASE/$CONTAINER|sed 's@/data@tank@'`
-if zfs create `echo $LXC_BASE/$CONTAINER|cut -f2- -d/`;then
+if ! zfs create `echo $LXC_BASE/$CONTAINER|cut -f2- -d/`;then
 	echo "ERROR: zfs create";
 	exit 1
 fi
@@ -58,7 +58,7 @@ cp -f  /etc/apt/apt.conf.d/recommends $LXC_BASE/$CONTAINER/rootfs/etc/apt/apt.co
 
 CMD="chroot $LXC_BASE/$CONTAINER/rootfs"
 
-if $CMD /bin/echo;then
+if ! $CMD /bin/echo;then
 	echo "ERROR: chroot"
 	exit 1
 fi

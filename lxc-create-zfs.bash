@@ -31,7 +31,7 @@ fi
 
 
 # lxc
-if ! lxc-create -n $CONTAINER -t ubuntu -- -r precise;then
+if ! lxc-create -n $CONTAINER -t ubuntu -- -r trusty; then
 # -- -a i386
 	echo "ERROR: lxc-create";
 	exit 1

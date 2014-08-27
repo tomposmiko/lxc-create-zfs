@@ -81,7 +81,7 @@ $CMD apt-get install language-pack-en language-pack-hu puppet vim -y
 $CMD /bin/bash -c "DEBIAN_FRONTEND=noninteractive apt-get remove --purge resolvconf -y --force-yes"
 $CMD locale-gen hu_HU
 
-$CMD sed -i "s@START=no@START=yes@" /etc/default/puppet
+#$CMD sed -i "s@START=no@START=yes@" /etc/default/puppet
 
 # passwd
 echo root:a| $CMD chpasswd
@@ -101,3 +101,5 @@ iface eth0 inet static
 EOF
 
 lxc-start -d -n $CONTAINER
+
+lxc-attach -n $CONTAINER -- puppet agent --enable

@@ -78,7 +78,7 @@ $CMD userdel -r ubuntu
 
 $CMD apt-get update
 $CMD apt-get install language-pack-en language-pack-hu puppet vim -y
-$CMD /bin/bash -c "DEBIAN_FRONTEND=noninteractive apt-get remove --purge resolvconf -y --force-yes"
+$CMD /bin/bash -c "DEBIAN_FRONTEND=noninteractive apt-get remove --purge resolvconf libnspr4 -y --force-yes"
 $CMD locale-gen hu_HU
 
 #$CMD sed -i "s@START=no@START=yes@" /etc/default/puppet

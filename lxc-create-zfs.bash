@@ -58,7 +58,6 @@ cd $LXC_BASE
 
 rm -rf ${CONTAINER}.tmp
 mv $CONTAINER ${CONTAINER}.tmp
-#zfs create `echo $LXC_BASE/$CONTAINER|sed 's@/data@tank@'`
 if ! zfs create `echo $LXC_BASE/$CONTAINER|cut -f2- -d/`;then
 	say "$red ERROR: zfs create";
 	exit 1

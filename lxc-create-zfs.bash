@@ -118,4 +118,16 @@ EOF
 
 lxc-start -d -n $CONTAINER
 
-lxc-attach -n $CONTAINER -- puppet agent --enable
+lxc-attach -n $CONTAINER -- puppet agent -t --enable
+
+while true; do
+        #read -s -n1 -t1 answer
+        read answer
+        echo -e "\nHave the puppet request been signed on the server?\n";
+        if [ "$answer" == yes ];
+        	then
+				lxc-attach -n $CONTAINER -- puppet agent -t
+				lxc-attach -n $CONTAINER -- puppet agent -t
+				lxc-attach -n $CONTAINER -- puppet agent -t
+        fi
+done

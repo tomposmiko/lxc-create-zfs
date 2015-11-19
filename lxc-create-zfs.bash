@@ -129,5 +129,6 @@ while true; do
 				lxc-attach -n $CONTAINER -- puppet agent -t
 				lxc-attach -n $CONTAINER -- puppet agent -t
 				lxc-attach -n $CONTAINER -- puppet agent -t
+				exit 0
         fi
 done

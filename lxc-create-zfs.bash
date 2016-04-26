@@ -48,7 +48,7 @@ fi
 
 
 # lxc
-if ! lxc-create -n $CONTAINER -t ubuntu -- -r trusty; then
+if ! lxc-create -n $CONTAINER -t ubuntu -- -r xenial; then
 # -- -a i386
 	say "$red ERROR: lxc-create";
 	exit 1

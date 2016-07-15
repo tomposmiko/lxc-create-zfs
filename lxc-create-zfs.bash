@@ -128,6 +128,10 @@ nameserver 10.0.0.11
 EOF
 fi
 
+# remove the containers /etc/localtime so tzdata can reinitialize
+# itself properly
+rm $LXC_BASE/$CONTAINER/rootfs/etc/localtime
+
 lxc-start -d -n $CONTAINER
 
 lxc-attach -n $CONTAINER -- puppet agent -t --enable

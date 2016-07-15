@@ -116,9 +116,23 @@ iface eth0 inet static
 	gateway $GW
 EOF
 
+#fix resolvconf's broken postrm in xenial
+RESOLVCONF=$LXC_BASE/$CONTAINER/rootfs/etc/resolv.conf
+if [ -L $RESOLVCONF ]
+then
+	rm $RESOLVCONF
+	cat > $RESOLVCONF <<EOF
+search bpo.cxn bph.cxn
+nameserver 10.0.0.52
+nameserver 10.0.0.11
+EOF
+fi
+
 lxc-start -d -n $CONTAINER
 
 lxc-attach -n $CONTAINER -- puppet agent -t --enable
+
+printf "\nPress ENTER to continue with Puppet..."
 
 while true; do
         #read -s -n1 -t1 answer

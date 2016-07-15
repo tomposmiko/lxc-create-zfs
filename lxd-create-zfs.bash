@@ -49,6 +49,13 @@ then
     exit 1
 fi
 
+lxc config show | grep "storage.zfs_pool_name: tank/lxd"
+if [ $? -ne 0 ]
+then
+    say "$red ERROR: Container is not on ZFS pool!"
+    exit 1
+fi
+
 # lxd
 if ! lxc launch official:ubuntu/xenial/amd64 $CONTAINER ; then
 # -- -a i386

@@ -22,10 +22,10 @@ LXD_BASE="/var/lib/lxd/containers/"
 
 CONTAINER=$1
 
-which lxc
+which lxc >/dev/null
 if [ $? -ne 0 ]
 then
-    say "$red LXD is not installed, aborting!"
+    say "$red LXD not installed!"
     exit 1
 fi
 
@@ -42,7 +42,9 @@ if ! debootstrap --help >/dev/null 2>&1; then
     exit 1
 fi
 
-if [ -e $LXD_BASE/$CONTAINER ];then
+lxc info $CONTAINER >/dev/null 2>&1
+if [ $? -eq 0 ]
+then
     say "$red ERROR: Container exists!"
     exit 1
 fi

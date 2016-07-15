@@ -22,6 +22,13 @@ LXD_BASE="/var/lib/lxd/containers/"
 
 CONTAINER=$1
 
+which lxc
+if [ $? -ne 0 ]
+then
+    say "$red LXD is not installed, aborting!"
+    exit 1
+fi
+
 if ! IP=`host $CONTAINER | egrep -o "([0-9]{1,3}(\.[0-9]{1,3}){3})"`;then
     say "$red Error in DNS!"
     exit 1

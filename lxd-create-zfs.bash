@@ -82,15 +82,16 @@ iface eth0 inet static
 EOF
 
 # push init script to container for execution
-lxc file push --mode=755 run-first.sh $CONTAINER//run-first.sh
+lxc file push --mode=755 run-first-bpo.sh $CONTAINER//run-first-bpo.sh
 
 lxc start $CONTAINER
 
-lxc exec $CONTAINER -- /run-first.sh
-lxc exec $CONTAINER -- puppet agent -t --enable
+lxc exec $CONTAINER -- /run-first-bpo.sh
 
 printf "\nPress ENTER to continue with Puppet... "
 read answer
+
+lxc exec $CONTAINER -- puppet agent -t --enable
 
 while true; do
     echo -e "\nHave the puppet request been signed on the server?\n"

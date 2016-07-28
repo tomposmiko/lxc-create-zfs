@@ -57,23 +57,32 @@ then
 fi
 
 # lxd
-if ! lxc launch official:ubuntu/xenial/amd64 $CONTAINER ; then
+if ! lxc init images:ubuntu/xenial/amd64 $CONTAINER ; then
 # -- -a i386
-    say "$red ERROR: lxd launch";
+    say "$red ERROR: lxd init";
     exit 1
 fi
-
-# stop container
-lxc stop $CONTAINER
 
 # apt
 lxc file push /etc/apt/apt.conf.d/recommends $CONTAINER//etc/apt/apt.conf.d/
 
-# net
+# push host's resolver to container
+lxc file push /etc/resolv.conf $CONTAINER//etc/resolv.conf.host
+
+# loopback
 cat <<EOF | lxc file push - $CONTAINER//etc/network/interfaces
+# This file describes the network interfaces available on your system
+# and how to activate them. For more information, see interfaces(5).
+
+# The loopback network interface
 auto lo
 iface lo inet loopback
 
+source /etc/network/interfaces.d/*
+EOF
+
+# net
+cat <<EOF | lxc file push - $CONTAINER//etc/network/interfaces.d/eth0
 auto eth0
 iface eth0 inet static
 	address $IP
@@ -82,11 +91,11 @@ iface eth0 inet static
 EOF
 
 # push init script to container for execution
-lxc file push --mode=755 run-first-bpo.sh $CONTAINER//run-first-bpo.sh
+lxc file push --mode=755 run-first.sh $CONTAINER//run-first.sh
 
 lxc start $CONTAINER
 
-lxc exec $CONTAINER -- /run-first-bpo.sh
+lxc exec $CONTAINER -- /run-first.sh
 
 printf "\nPress ENTER to continue with Puppet... "
 read answer

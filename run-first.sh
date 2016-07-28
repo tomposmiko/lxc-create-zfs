@@ -11,21 +11,13 @@ fi
 
 # fix resolvconf's broken postrm in xenial
 RESOLVCONF="/etc/resolv.conf"
-if [ -L $RESOLVCONF ]
-then
-	rm $RESOLVCONF
-	cat > /etc/resolv.conf <<EOF
-search bpo.cxn bph.cxn
-nameserver 10.0.0.52
-nameserver 10.0.0.11
-EOF
-fi
+[ -L $RESOLVCONF ] && mv $RESOLVCONF{.host,}
 
 # delete user 'ubuntu'
 userdel -r ubuntu
 
-# set new rootpass
-echo root:a | chpasswd
+# disable root password
+sed -ie 's/^\(root:\)[^:]\+/\1!/g' /etc/shadow
 
 # packages
 apt-get update

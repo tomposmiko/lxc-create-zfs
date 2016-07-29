@@ -136,8 +136,11 @@ lxc-start -d -n $CONTAINER
 
 lxc-attach -n $CONTAINER -- puppet agent -t --enable
 
+<<<<<<< HEAD
 printf "\nPress ENTER to continue with Puppet..."
 
+=======
+>>>>>>> 7679d0e484d510b25120c996ec92fe377744e793
 while true; do
         #read -s -n1 -t1 answer
         read answer
@@ -147,6 +150,9 @@ while true; do
 				lxc-attach -n $CONTAINER -- puppet agent -t
 				lxc-attach -n $CONTAINER -- puppet agent -t
 				lxc-attach -n $CONTAINER -- puppet agent -t
+<<<<<<< HEAD
 				exit 0
+=======
+>>>>>>> 7679d0e484d510b25120c996ec92fe377744e793
         fi
 done

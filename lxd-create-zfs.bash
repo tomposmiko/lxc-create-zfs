@@ -49,6 +49,7 @@ then
     exit 1
 fi
 
+lxd_version=`lxc version`
 if dpkg --compare-versions $lxd_version lt 2.9
 then
     zfs_pool_name=$(lxc config get storage.zfs_pool_name)

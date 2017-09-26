@@ -49,8 +49,14 @@ then
     exit 1
 fi
 
-lxc config show | grep "storage.zfs_pool_name: tank/lxd"
-if [ $? -ne 0 ]
+if dpkg --compare-versions $lxd_version lt 2.9
+then
+    zfs_pool_name=$(lxc config get storage.zfs_pool_name)
+else
+    zfs_pool_name=$(lxc storage get default zfs.pool_name)
+fi
+
+if [ "$zfs_pool_name" != "tank/lxd" ]
 then
     say "$red ERROR: Container is not on ZFS pool!"
     exit 1
